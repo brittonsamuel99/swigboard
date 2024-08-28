@@ -41,9 +41,58 @@ function BoardMaker() {
         setNewShift({ employee: '', startTime: '', endTime: '' });
     };
 
+    const positions = ['handout', 'greeter', 'drink maker', 'line buster'];
+
     const generateBoard = () => {
-        // Placeholder for generate board logic
-        alert('Board generated with ' + shifts.length + ' shifts.');
+        const board = [];
+        const shiftDuration = 0.5; // 0.5 hours
+
+        // Determine the earliest start time and latest end time
+        const startTimes = shifts.map(shift => new Date(`1970-01-01T${shift.startTime}:00`).getTime());
+        const endTimes = shifts.map(shift => new Date(`1970-01-01T${shift.endTime}:00`).getTime());
+        const earliestStartTime = Math.min(...startTimes);
+        const latestEndTime = Math.max(...endTimes);
+
+        // Create time slots for every 0.5 hours between the earliest start and latest end
+        const timeSlots = [];
+        for (let time = earliestStartTime; time <= latestEndTime; time += shiftDuration * 60 * 60 * 1000) {
+            timeSlots.push(new Date(time).toISOString().substr(11, 5));
+        }
+
+        const lastAssignedPositions = {};
+
+        timeSlots.forEach(timeSlot => {
+            const shiftBoard = [];
+            const availableEmployees = employees.filter(employee =>
+                employee.positionsAbleToPerform.length > 0
+            );
+
+            let positionIndex = 0;
+
+            availableEmployees.forEach(employee => {
+                const availablePositions = positions.filter(position =>
+                    employee.positionsAbleToPerform.includes(position) &&
+                    !shiftBoard.some(s => s.employee === employee.name && s.position === position) &&
+                    lastAssignedPositions[employee.name] !== position
+                );
+
+                if (availablePositions.length > 0) {
+                    const position = availablePositions[positionIndex % availablePositions.length];
+                    shiftBoard.push({
+                        employee: employee.name,
+                        position: position,
+                        timeSlot: timeSlot
+                    });
+                    lastAssignedPositions[employee.name] = position;
+                    positionIndex++;
+                }
+            });
+
+            board.push({ timeSlot, shiftBoard });
+        });
+
+        console.log(board);
+        alert('Board generated with ' + board.length + ' time slots.');
     };
 
     return (
