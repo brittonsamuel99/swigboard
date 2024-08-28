@@ -1,25 +1,23 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import BoardMaker from './BoardMaker';
+import EmployeeEditor from './EmployeeEditor';
+import NavBar from './NavBar';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Swig Board
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="App">
+                <NavBar />
+                <Routes>
+                    <Route path="/board-maker" element={<BoardMaker />} />
+                    <Route path="/employee-editor" element={<EmployeeEditor />} />
+                    <Route path="/" element={<Navigate to="/board-maker" />} />
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
