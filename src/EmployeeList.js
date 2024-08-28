@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Stack, Text, VStack } from '@chakra-ui/react';
 
 function EmployeeList({ employees, deleteEmployee }) {
     return (
@@ -19,13 +19,22 @@ function EmployeeList({ employees, deleteEmployee }) {
                         display="flex"
                         justifyContent="space-between"
                         alignItems="center"
+                        flexDirection="column"
                     >
-                        <Text fontSize="lg">
-                            {employee.name} - {employee.position}
-                        </Text>
+                        <VStack align="start" w="full">
+                            <Text fontSize="lg" fontWeight="bold">
+                                {employee.name} - {employee.position}
+                            </Text>
+                            {employee.positionsAbleToPerform && (
+                                <Text fontSize="sm" color="gray.600">
+                                    Can perform: {employee.positionsAbleToPerform.join(', ')}
+                                </Text>
+                            )}
+                        </VStack>
                         <Button
                             colorScheme="red"
                             size="sm"
+                            alignSelf="flex-end"
                             onClick={() => deleteEmployee(index)}
                         >
                             Delete
