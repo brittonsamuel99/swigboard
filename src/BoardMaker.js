@@ -11,11 +11,18 @@ import {
     Heading,
     VStack,
     Text,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td
 } from '@chakra-ui/react';
 
 function BoardMaker() {
     const [shifts, setShifts] = useState([]);
     const [employees, setEmployees] = useState([]);
+    const [board, setBoard] = useState([]);
 
     const [newShift, setNewShift] = useState({
         employee: '',
@@ -29,7 +36,17 @@ function BoardMaker() {
         if (savedEmployees) {
             setEmployees(JSON.parse(savedEmployees));
         }
+
+        // Retrieve the list of shifts from localStorage
+        const savedShifts = localStorage.getItem('shifts');
+        if (savedShifts) {
+            setShifts(JSON.parse(savedShifts));
+        }
     }, []);
+
+    useEffect(() => {
+        console.log(board);
+    }, [board]);
 
     const handleShiftChange = (e) => {
         const { name, value } = e.target;
@@ -37,7 +54,9 @@ function BoardMaker() {
     };
 
     const addShift = () => {
-        setShifts([...shifts, newShift]);
+        const updatedShifts = [...shifts, newShift];
+        setShifts(updatedShifts);
+        localStorage.setItem('shifts', JSON.stringify(updatedShifts));
         setNewShift({ employee: '', startTime: '', endTime: '' });
     };
 
@@ -91,8 +110,40 @@ function BoardMaker() {
             board.push({ timeSlot, shiftBoard });
         });
 
-        console.log(board);
-        alert('Board generated with ' + board.length + ' time slots.');
+        setBoard(board);
+    };
+
+    const displayBoard = () => {
+        const timeSlots = board.map(slot => slot.timeSlot);
+        const uniqueTimeSlots = [...new Set(timeSlots)];
+
+        return (
+            <Box overflowX="auto" maxH="500px" overflowY="auto">
+                <Table variant="simple">
+                    <Thead>
+                        <Tr>
+                            <Th>Position</Th>
+                            {uniqueTimeSlots.map((timeSlot, index) => (
+                                <Th key={index}>{timeSlot}</Th>
+                            ))}
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {positions.map((position, posIndex) => (
+                            <Tr key={posIndex}>
+                                <Td>{position}</Td>
+                                {uniqueTimeSlots.map((timeSlot, timeIndex) => {
+                                    const employee = board.find(
+                                        slot => slot.timeSlot === timeSlot && slot.shiftBoard.some(s => s.position === position)
+                                    )?.shiftBoard.find(s => s.position === position)?.employee || '';
+                                    return <Td key={timeIndex}>{employee}</Td>;
+                                })}
+                            </Tr>
+                        ))}
+                    </Tbody>
+                </Table>
+            </Box>
+        );
     };
 
     return (
@@ -174,6 +225,16 @@ function BoardMaker() {
                 <Button colorScheme="blue" size="lg" w="full" onClick={generateBoard}>
                     Generate Board
                 </Button>
+
+                {/* Display Board */}
+                {board.length > 0 && (
+                    <Box mt="8">
+                        <Heading as="h2" size="lg" textAlign="center" mb="4">
+                            Shift Board
+                        </Heading>
+                        {displayBoard()}
+                    </Box>
+                )}
             </Container>
         </Box>
     );
