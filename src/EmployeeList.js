@@ -1,18 +1,39 @@
 import React from 'react';
+import { Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
 
 function EmployeeList({ employees, deleteEmployee }) {
     return (
-        <div>
-            <h2>Employee List</h2>
-            <ul>
+        <Box p="6" maxW="800px" mx="auto">
+            <Heading as="h2" size="lg" mb="6" textAlign="center">
+                Employee List
+            </Heading>
+            <Stack spacing="4">
                 {employees.map((employee, index) => (
-                    <li key={index}>
-                        {employee.name} - {employee.position}
-                        <button onClick={() => deleteEmployee(index)}>Delete</button>
-                    </li>
+                    <Box
+                        key={index}
+                        p="4"
+                        bg="gray.50"
+                        borderWidth="1px"
+                        borderRadius="md"
+                        boxShadow="sm"
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <Text fontSize="lg">
+                            {employee.name} - {employee.position}
+                        </Text>
+                        <Button
+                            colorScheme="red"
+                            size="sm"
+                            onClick={() => deleteEmployee(index)}
+                        >
+                            Delete
+                        </Button>
+                    </Box>
                 ))}
-            </ul>
-        </div>
+            </Stack>
+        </Box>
     );
 }
 

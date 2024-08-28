@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Box, Container, Heading, Divider } from '@chakra-ui/react';
 import EmployeeList from './EmployeeList';
 import EmployeeForm from './EmployeeForm';
 
@@ -21,11 +22,16 @@ function EmployeeEditor() {
     };
 
     return (
-        <div>
-            <h1>Employee Editor</h1>
-            <EmployeeForm addEmployee={addEmployee} />
-            <EmployeeList employees={employees} deleteEmployee={deleteEmployee} />
-        </div>
+        <Box bg="gray.100" minH="100vh" py="8">
+            <Container maxW="container.md" bg="white" p="8" borderRadius="lg" boxShadow="lg">
+                <Heading as="h1" size="xl" textAlign="center" mb="8">
+                    Employee Editor
+                </Heading>
+                <EmployeeForm addEmployee={addEmployee} />
+                <Divider my="6" />
+                <EmployeeList employees={employees} deleteEmployee={deleteEmployee} />
+            </Container>
+        </Box>
     );
 }
 
